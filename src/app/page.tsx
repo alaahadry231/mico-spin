@@ -228,7 +228,7 @@ export default function HomePage() {
                     <Scale className="w-5 h-5 text-amber-400" />
                     <span className="text-sm font-semibold text-white tracking-wide">محرك التوازن الإحصائي</span>
                   </div>
-                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V14</span>
+                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V15</span>
                 </div>
                 <StatisticalPredictor 
                   results={results} 
@@ -362,7 +362,7 @@ export default function HomePage() {
       <footer className="max-w-[1600px] mx-auto px-4 md:px-8 py-6 border-t border-white/[0.04] mt-6">
         <div className="flex items-center justify-between text-[10px] text-slate-600 font-mono tracking-widest uppercase">
           <span>Mico Spin Intelligence</span>
-          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V14.0</span>
+          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V15.0</span>
         </div>
       </footer>
     </main>
@@ -461,7 +461,7 @@ function GapDisplay({ results }: { results: ResultRow[] }) {
 }
 
 // ==========================================
-// المحرك الإحصائي (Reversion V14)
+// المحرك الإحصائي (Reversion V15)
 // ==========================================
 
 interface EnhancedDeviationData {
@@ -493,13 +493,14 @@ function getRecentMomentum(results: ResultRow[]): { meatMomentum: number; vegMom
   return { meatMomentum, vegMomentum };
 }
 
+// 👇 تم تعديل هذه الدالة فقط (V15): بونص أعلى للأنماط التسلسلية
 function getSequencePatternBonus(results: ResultRow[]): Record<string, number> {
   const bonus: Record<string, number> = {};
   SYMBOLS.forEach(s => { bonus[s.id] = 0; });
 
   if (results.length < 5) return bonus;
 
-  const patternLengths = [3, 2]; 
+  const patternLengths = [3, 2]; // أولاً 3، ثم 2
   
   for (const len of patternLengths) {
     if (results.length < len + 1) continue;
@@ -525,8 +526,9 @@ function getSequencePatternBonus(results: ResultRow[]): Record<string, number> {
     }
 
     if (totalMatches >= 2) {
+      // 👇 بونص أعلى (حتى 50 نقطة بدل 25) عشان يغلب الغياب
       Object.entries(matches).forEach(([symId, count]) => {
-        bonus[symId] = (count / totalMatches) * 25;
+        bonus[symId] = (count / totalMatches) * 50;
       });
       return bonus;
     }
@@ -649,7 +651,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 
     const doubleBonus = deviation < 0 && relativeGap > 1.2;
     
-    // 👇 توزيع الأوزان (V14): الخضار كما هي، واللحوم معتمدة على الأنماط والتكرار
+    // 👇 توزيع الأوزان (V15): الخضار كما هي، واللحوم معتمدة على الأنماط والتكرار
     let totalScore = 0;
 
     if (sym.type === 'vegetable') {
@@ -665,7 +667,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
       if (relativeGap >= 1.5) totalScore += 6;
       if (relativeGap >= 2.0) totalScore += 8;
     } else {
-      // 👇 اللحوم V14: التركيز على الأنماط (45%) والتكرار (30%)، وتخفيف الغياب (15%)
+      // 👇 اللحوم V15: التركيز على الأنماط (45%) والتكرار (30%)، وتخفيف الغياب (15%)
       totalScore = 
         (deviationScore * 0.10) + 
         (gapScore * 0.15) + 
@@ -720,7 +722,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 }
 
 // ==========================================
-// مكون التوقعات (Reversion V14)
+// مكون التوقعات (Reversion V15)
 // ==========================================
 function StatisticalPredictor({ 
   results, 
@@ -762,7 +764,7 @@ function StatisticalPredictor({
     <div className="flex-1 flex flex-col justify-between gap-5">
       <div>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V14</span>
+          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V15</span>
           <span className="text-[10px] font-mono text-cyan-400">Window: {windowSize}</span>
         </div>
 
@@ -897,7 +899,7 @@ function StatisticalPredictor({
 }
 
 // ==========================================
-// لوحة الانحراف (Reversion V14)
+// لوحة الانحراف (Reversion V15)
 // ==========================================
 function DeviationPanel({ results }: { results: ResultRow[] }) {
   if (results.length < 10) {
