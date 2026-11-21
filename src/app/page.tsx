@@ -228,7 +228,7 @@ export default function HomePage() {
                     <Scale className="w-5 h-5 text-amber-400" />
                     <span className="text-sm font-semibold text-white tracking-wide">محرك التوازن الإحصائي</span>
                   </div>
-                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V10</span>
+                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V11</span>
                 </div>
                 <StatisticalPredictor 
                   results={results} 
@@ -362,7 +362,7 @@ export default function HomePage() {
       <footer className="max-w-[1600px] mx-auto px-4 md:px-8 py-6 border-t border-white/[0.04] mt-6">
         <div className="flex items-center justify-between text-[10px] text-slate-600 font-mono tracking-widest uppercase">
           <span>Mico Spin Intelligence</span>
-          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V10.0</span>
+          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V11.0</span>
         </div>
       </footer>
     </main>
@@ -461,7 +461,7 @@ function GapDisplay({ results }: { results: ResultRow[] }) {
 }
 
 // ==========================================
-// المحرك الإحصائي (Reversion V10)
+// المحرك الإحصائي (Reversion V11)
 // ==========================================
 
 interface EnhancedDeviationData {
@@ -649,7 +649,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 
     const doubleBonus = deviation < 0 && relativeGap > 1.2;
     
-        // 👇 توزيع أوزان مخصص لكل نوع (V11)
+    // 👇 توزيع أوزان مخصص لكل نوع (V11)
     let totalScore = 0;
 
     if (sym.type === 'vegetable') {
@@ -666,18 +666,18 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
       if (relativeGap >= 1.5) totalScore += 4;
       if (relativeGap >= 2.0) totalScore += 6;
     } else {
-      // اللحوم: التركيز على الأنماط (40%) والتكرار (30%)، والغياب 15% فقط
+      // اللحوم: التركيز على الغياب (35%) والانحراف (20%)، والتسلسل 25%، التكرار 20%
       totalScore = 
-        (deviationScore * 0.05) + 
-        (gapScore * 0.15) + 
+        (deviationScore * 0.20) + 
+        (gapScore * 0.35) + 
         (momentumBonus * 0.05) + 
         (streakBonus * 0.05) + 
-        (seqBonusForThisSymbol * 0.40) + 
-        (repeatBonus * 0.30);
+        (seqBonusForThisSymbol * 0.25) + 
+        (repeatBonus * 0.10);
       
-      // مكافآت الغياب للحوم (خفيفة جداً)
-      if (relativeGap >= 1.5) totalScore += 3;
-      if (relativeGap >= 2.0) totalScore += 5;
+      // مكافآت الغياب للحوم (أقوى)
+      if (relativeGap >= 1.5) totalScore += 10;
+      if (relativeGap >= 2.0) totalScore += 15;
     }
     
     // 👇 مكافأة التكرار الفوري (لكل الأنواع)
@@ -722,7 +722,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 }
 
 // ==========================================
-// مكون التوقعات (Reversion V10)
+// مكون التوقعات (Reversion V11)
 // ==========================================
 function StatisticalPredictor({ 
   results, 
@@ -764,7 +764,7 @@ function StatisticalPredictor({
     <div className="flex-1 flex flex-col justify-between gap-5">
       <div>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V10</span>
+          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V11</span>
           <span className="text-[10px] font-mono text-cyan-400">Window: {windowSize}</span>
         </div>
 
@@ -899,7 +899,7 @@ function StatisticalPredictor({
 }
 
 // ==========================================
-// لوحة الانحراف (Reversion V10)
+// لوحة الانحراف (Reversion V11)
 // ==========================================
 function DeviationPanel({ results }: { results: ResultRow[] }) {
   if (results.length < 10) {
