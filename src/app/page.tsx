@@ -749,8 +749,24 @@ function StatisticalPredictor({
 
   const { deviations, windowSize, momentum } = analyzeEnhancedDeviation(results);
 
-  const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
-  const animalPicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal').slice(0, 3);
+    const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
+
+  // 👇 اختيار اللحوم بناءً على الأنماط أولاً، ثم الغياب
+  const animalDeviations = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal');
+  
+  // 1. نبحث عن لحوم لها بونص تسلسلي (seqBonus > 0)
+  const animalsWithSequence = animalDeviations.filter(d => d.sequenceBonus > 0);
+  
+  let animalPicks;
+  if (animalsWithSequence.length >= 2) {
+    // إذا كان هناك لحوم لها أنماط، نختار أعلى 3 منها (أو أقل إذا لم يوجد 3)
+    animalPicks = animalsWithSequence.sort((a, b) => b.totalScore - a.totalScore).slice(0, 3);
+  } else {
+    // إذا لم توجد أنماط كافية، نختار أعلى 3 لحوم حسب النقاط (الغياب وغيره)
+    animalPicks = animalDeviations.sort((a, b) => b.totalScore - a.totalScore).slice(0, 3);
+  }
+
+  // دمج التوقعات وترتيبها حسب النقاط للعرض
   const finalPicks = [...veggiePicks, ...animalPicks].sort((a, b) => b.totalScore - a.totalScore);
 
   const doubleBonusCount = finalPicks.filter(d => d.doubleBonus).length;
