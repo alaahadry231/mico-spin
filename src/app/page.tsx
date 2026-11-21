@@ -665,7 +665,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
       // مكافآت الغياب للخضار (كما كانت في V10)
       if (relativeGap >= 1.5) totalScore += 6;
       if (relativeGap >= 2.0) totalScore += 8;
-    } else {
+        } else {
       // اللحوم: التركيز على الغياب (35%) والانحراف (20%)، والتسلسل 25%، التكرار 20%
       totalScore = 
         (deviationScore * 0.20) + 
@@ -675,7 +675,12 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
         (seqBonusForThisSymbol * 0.25) + 
         (repeatBonus * 0.10);
       
-      // مكافآت الغياب للحوم (أقوى)
+      // 👇 مكافأة الغياب المطلق (تتزايد مع عدد الجولات)
+      // كل 10 جولات غياب = +5 نقاط إضافية
+      const absoluteGapBonus = Math.floor(currentGap / 10) * 5;
+      totalScore += absoluteGapBonus;
+      
+      // مكافآت إضافية للغياب النسبي (كما كانت)
       if (relativeGap >= 1.5) totalScore += 10;
       if (relativeGap >= 2.0) totalScore += 15;
     }
