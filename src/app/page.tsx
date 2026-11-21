@@ -649,32 +649,51 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 
     const doubleBonus = deviation < 0 && relativeGap > 1.2;
     
-    // 👇 توزيع الأوزان V10: التسلسل 35%، الغياب 20%، التكرار 20%، الانحراف 15%، الزخم 10%
-    let totalScore = 
-      (deviationScore * 0.15) + 
-      (gapScore * 0.20) + 
-      (momentumBonus * 0.10) + 
-      (streakBonus * 0.05) + 
-      (seqBonusForThisSymbol * 0.35) + 
-      (repeatBonus * 0.20);
+        // 👇 توزيع أوزان مخصص لكل نوع (V11)
+    let totalScore = 0;
 
-    // 👇 مكافآت الغياب (خففت)
-    if (relativeGap >= 1.5) totalScore += 6;
-    if (relativeGap >= 2.0) totalScore += 8;
+    if (sym.type === 'vegetable') {
+      // الخضار: التركيز على الأنماط (40%) والتكرار (25%)، وتخفيف الغياب (10%)
+      totalScore = 
+        (deviationScore * 0.10) + 
+        (gapScore * 0.10) + 
+        (momentumBonus * 0.10) + 
+        (streakBonus * 0.05) + 
+        (seqBonusForThisSymbol * 0.40) + 
+        (repeatBonus * 0.25);
+      
+      // مكافآت الغياب للخضار (خفيفة)
+      if (relativeGap >= 1.5) totalScore += 4;
+      if (relativeGap >= 2.0) totalScore += 6;
+    } else {
+      // اللحوم: التركيز على الأنماط (40%) والتكرار (30%)، والغياب 15% فقط
+      totalScore = 
+        (deviationScore * 0.05) + 
+        (gapScore * 0.15) + 
+        (momentumBonus * 0.05) + 
+        (streakBonus * 0.05) + 
+        (seqBonusForThisSymbol * 0.40) + 
+        (repeatBonus * 0.30);
+      
+      // مكافآت الغياب للحوم (خفيفة جداً)
+      if (relativeGap >= 1.5) totalScore += 3;
+      if (relativeGap >= 2.0) totalScore += 5;
+    }
     
-    // 👇 مكافأة التكرار الفوري
+    // 👇 مكافأة التكرار الفوري (لكل الأنواع)
     const isLastResult = results[results.length - 1]?.symbol_id === sym.id;
     if (isLastResult) {
-      if (repeatRate >= 20) totalScore += 25;
-      else if (repeatRate >= 10) totalScore += 20;
-      else if (repeatRate >= 5) totalScore += 12;
-      else totalScore += 5;
+      if (repeatRate >= 20) totalScore += 30;
+      else if (repeatRate >= 10) totalScore += 25;
+      else if (repeatRate >= 5) totalScore += 15;
+      else totalScore += 8;
     }
 
     if (doubleBonus) totalScore += 5;
 
+    // 👇 تخفيض اللحوم فقط إذا كانت "ميتة" تماماً
     if (sym.type === 'animal') {
-      if (relativeGap < 1.0 && streakValue < 2 && seqBonusForThisSymbol === 0 && repeatRate < 5) {
+      if (relativeGap < 0.8 && streakValue < 1 && seqBonusForThisSymbol === 0 && repeatRate < 3) {
         totalScore = totalScore * 0.5;
       }
     }
