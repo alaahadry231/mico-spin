@@ -235,6 +235,13 @@ export default function HomePage() {
                   wins={wins} 
                   losses={losses} 
                   lastPickResult={lastPickResult} 
+                  onReset={() => {
+                    setWins(0);
+                    setLosses(0);
+                    setLastPickResult(null);
+                    localStorage.removeItem('micoSpin_wins');
+                    localStorage.removeItem('micoSpin_losses');
+                  }}
                 />
               </div>
             </div>
@@ -697,12 +704,14 @@ function StatisticalPredictor({
   results, 
   wins, 
   losses, 
-  lastPickResult 
+  lastPickResult,
+  onReset
 }: { 
   results: ResultRow[]; 
   wins: number; 
   losses: number; 
-  lastPickResult: 'win' | 'loss' | null 
+  lastPickResult: 'win' | 'loss' | null;
+  onReset: () => void;
 }) {
   if (results.length < 5) {
     return (
@@ -788,11 +797,7 @@ function StatisticalPredictor({
           <button
             onClick={() => {
               if (!confirm('هل أنت متأكد من تصفير إحصائيات الرابح والخاسر؟')) return;
-              setWins(0);
-              setLosses(0);
-              setLastPickResult(null);
-              localStorage.removeItem('micoSpin_wins');
-              localStorage.removeItem('micoSpin_losses');
+              onReset();
             }}
             className="absolute -top-6 left-0 text-[9px] text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1"
             title="تصفير الإحصائيات"
