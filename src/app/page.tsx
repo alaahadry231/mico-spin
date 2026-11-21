@@ -228,7 +228,7 @@ export default function HomePage() {
                     <Scale className="w-5 h-5 text-amber-400" />
                     <span className="text-sm font-semibold text-white tracking-wide">محرك التوازن الإحصائي</span>
                   </div>
-                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V9</span>
+                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V10</span>
                 </div>
                 <StatisticalPredictor 
                   results={results} 
@@ -258,10 +258,10 @@ export default function HomePage() {
                   <p className="text-[10px] text-slate-500 mt-1">سجل النتيجة الجديدة لتحديث التحليل الفوري</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={handleUndo} disabled={submitting || results.length === 0} className="p-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] transition-all disabled:opacity-30 text-slate-400 hover:text-white"><RotateCcw className="w-4 h-4" /></button>
-                  <button onClick={handleClearAll} disabled={submitting || results.length === 0} className="p-2 rounded-lg bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10 transition-all disabled:opacity-30 text-rose-400"><Trash2 className="w-4 h-4" /></button>
-                  <label className="p-2 rounded-lg bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/10 transition-all cursor-pointer text-cyan-400">
-                    <Upload className="w-4 h-4" />
+                  <button onClick={handleUndo} disabled={submitting || results.length === 0} className="p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] transition-all disabled:opacity-30 text-slate-400 hover:text-white"><RotateCcw className="w-5 h-5" /></button>
+                  <button onClick={handleClearAll} disabled={submitting || results.length === 0} className="p-2.5 rounded-lg bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10 transition-all disabled:opacity-30 text-rose-400"><Trash2 className="w-5 h-5" /></button>
+                  <label className="p-2.5 rounded-lg bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/10 transition-all cursor-pointer text-cyan-400">
+                    <Upload className="w-5 h-5" />
                     <input type="file" accept=".csv" className="hidden" onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (file) { 
@@ -362,7 +362,7 @@ export default function HomePage() {
       <footer className="max-w-[1600px] mx-auto px-4 md:px-8 py-6 border-t border-white/[0.04] mt-6">
         <div className="flex items-center justify-between text-[10px] text-slate-600 font-mono tracking-widest uppercase">
           <span>Mico Spin Intelligence</span>
-          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V9.0</span>
+          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V10.0</span>
         </div>
       </footer>
     </main>
@@ -461,7 +461,7 @@ function GapDisplay({ results }: { results: ResultRow[] }) {
 }
 
 // ==========================================
-// المحرك الإحصائي (Reversion V9)
+// المحرك الإحصائي (Reversion V10)
 // ==========================================
 
 interface EnhancedDeviationData {
@@ -649,7 +649,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 
     const doubleBonus = deviation < 0 && relativeGap > 1.2;
     
-    // 👇 توزيع الأوزان الجديد: التسلسل 35%، الغياب 20%، التكرار 20%، الانحراف 15%، الزخم 10%
+    // 👇 توزيع الأوزان V10: التسلسل 35%، الغياب 20%، التكرار 20%، الانحراف 15%، الزخم 10%
     let totalScore = 
       (deviationScore * 0.15) + 
       (gapScore * 0.20) + 
@@ -658,11 +658,11 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
       (seqBonusForThisSymbol * 0.35) + 
       (repeatBonus * 0.20);
 
-    // 👇 خففنا مكافآت الغياب شوي عشان ما تطغى على الأنماط
+    // 👇 مكافآت الغياب (خففت)
     if (relativeGap >= 1.5) totalScore += 6;
     if (relativeGap >= 2.0) totalScore += 8;
     
-    // 👇 مكافأة التكرار الفوري (زادت من 10 إلى 25)
+    // 👇 مكافأة التكرار الفوري
     const isLastResult = results[results.length - 1]?.symbol_id === sym.id;
     if (isLastResult) {
       if (repeatRate >= 20) totalScore += 25;
@@ -703,7 +703,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 }
 
 // ==========================================
-// مكون التوقعات (Reversion V9)
+// مكون التوقعات (Reversion V10)
 // ==========================================
 function StatisticalPredictor({ 
   results, 
@@ -745,7 +745,7 @@ function StatisticalPredictor({
     <div className="flex-1 flex flex-col justify-between gap-5">
       <div>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V9</span>
+          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V10</span>
           <span className="text-[10px] font-mono text-cyan-400">Window: {windowSize}</span>
         </div>
 
@@ -880,7 +880,7 @@ function StatisticalPredictor({
 }
 
 // ==========================================
-// لوحة الانحراف (Reversion V9)
+// لوحة الانحراف (Reversion V10)
 // ==========================================
 function DeviationPanel({ results }: { results: ResultRow[] }) {
   if (results.length < 10) {
