@@ -649,22 +649,22 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 
     const doubleBonus = deviation < 0 && relativeGap > 1.2;
     
-    // 👇 توزيع أوزان مخصص لكل نوع (V11)
+        // 👇 توزيع الأوزان (V12): الخضار كما كانت في V10، واللحوم معدلة
     let totalScore = 0;
 
     if (sym.type === 'vegetable') {
-      // الخضار: التركيز على الأنماط (40%) والتكرار (25%)، وتخفيف الغياب (10%)
+      // الخضار: نفس معادلة V10 (لم تتغير)
       totalScore = 
-        (deviationScore * 0.10) + 
-        (gapScore * 0.10) + 
+        (deviationScore * 0.15) + 
+        (gapScore * 0.20) + 
         (momentumBonus * 0.10) + 
         (streakBonus * 0.05) + 
-        (seqBonusForThisSymbol * 0.40) + 
-        (repeatBonus * 0.25);
+        (seqBonusForThisSymbol * 0.35) + 
+        (repeatBonus * 0.20);
       
-      // مكافآت الغياب للخضار (خفيفة)
-      if (relativeGap >= 1.5) totalScore += 4;
-      if (relativeGap >= 2.0) totalScore += 6;
+      // مكافآت الغياب للخضار (كما كانت في V10)
+      if (relativeGap >= 1.5) totalScore += 6;
+      if (relativeGap >= 2.0) totalScore += 8;
     } else {
       // اللحوم: التركيز على الغياب (35%) والانحراف (20%)، والتسلسل 25%، التكرار 20%
       totalScore = 
