@@ -767,19 +767,38 @@ function StatisticalPredictor({
           </div>
         )}
 
-        <div className="grid grid-cols-3 gap-2 mt-4 mb-4">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2 text-center">
-            <div className="text-[9px] text-emerald-300 mb-1">رابح</div>
-            <div className="text-lg font-bold text-emerald-400 font-mono">{wins}</div>
+        {/* 👇 بلوك الرابح والخاسر مع زر التصفير */}
+        <div className="relative mb-4">
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2 text-center">
+              <div className="text-[9px] text-emerald-300 mb-1">رابح</div>
+              <div className="text-lg font-bold text-emerald-400 font-mono">{wins}</div>
+            </div>
+            <div className="bg-rose-500/10 border border-rose-500/20 rounded-lg p-2 text-center">
+              <div className="text-[9px] text-rose-300 mb-1">خاسر</div>
+              <div className="text-lg font-bold text-rose-400 font-mono">{losses}</div>
+            </div>
+            <div className="bg-white/[0.02] border border-white/10 rounded-lg p-2 text-center">
+              <div className="text-[9px] text-slate-400 mb-1">نسبة النجاح</div>
+              <div className="text-lg font-bold text-white font-mono">{winRate.toFixed(1)}%</div>
+            </div>
           </div>
-          <div className="bg-rose-500/10 border border-rose-500/20 rounded-lg p-2 text-center">
-            <div className="text-[9px] text-rose-300 mb-1">خاسر</div>
-            <div className="text-lg font-bold text-rose-400 font-mono">{losses}</div>
-          </div>
-          <div className="bg-white/[0.02] border border-white/10 rounded-lg p-2 text-center">
-            <div className="text-[9px] text-slate-400 mb-1">نسبة النجاح</div>
-            <div className="text-lg font-bold text-white font-mono">{winRate.toFixed(1)}%</div>
-          </div>
+
+          {/* 👇 زر التصفير */}
+          <button
+            onClick={() => {
+              if (!confirm('هل أنت متأكد من تصفير إحصائيات الرابح والخاسر؟')) return;
+              setWins(0);
+              setLosses(0);
+              setLastPickResult(null);
+              localStorage.removeItem('micoSpin_wins');
+              localStorage.removeItem('micoSpin_losses');
+            }}
+            className="absolute -top-6 left-0 text-[9px] text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1"
+            title="تصفير الإحصائيات"
+          >
+            <RotateCcw className="w-3 h-3" /> تصفير
+          </button>
         </div>
 
         {lastPickResult && (
