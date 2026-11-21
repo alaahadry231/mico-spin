@@ -100,8 +100,8 @@ export default function HomePage() {
     setSubmitting(true);
 
     const { deviations } = analyzeEnhancedDeviation(results);
-    const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
-    const animalPicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal').slice(0, 2);
+        const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
+    const animalPicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal').slice(0, 3);
     const finalPicks = [...veggiePicks, ...animalPicks];
     const wasInPicks = finalPicks.some(p => p.symbol === symbolId);
 
@@ -725,8 +725,8 @@ function StatisticalPredictor({
 
   const { deviations, windowSize, momentum } = analyzeEnhancedDeviation(results);
 
-  const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
-  const animalPicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal').slice(0, 2);
+    const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
+  const animalPicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal').slice(0, 3);
   const finalPicks = [...veggiePicks, ...animalPicks].sort((a, b) => b.totalScore - a.totalScore);
 
   const doubleBonusCount = finalPicks.filter(d => d.doubleBonus).length;
@@ -816,7 +816,7 @@ function StatisticalPredictor({
           </div>
         )}
 
-        <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-6 gap-2">
           {finalPicks.map((p, i) => {
             const sym = SYMBOLS.find(s => s.id === p.symbol)!;
             return (
