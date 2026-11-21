@@ -228,7 +228,7 @@ export default function HomePage() {
                     <Scale className="w-5 h-5 text-amber-400" />
                     <span className="text-sm font-semibold text-white tracking-wide">محرك التوازن الإحصائي</span>
                   </div>
-                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V15</span>
+                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">REVERSION V16</span>
                 </div>
                 <StatisticalPredictor 
                   results={results} 
@@ -362,7 +362,7 @@ export default function HomePage() {
       <footer className="max-w-[1600px] mx-auto px-4 md:px-8 py-6 border-t border-white/[0.04] mt-6">
         <div className="flex items-center justify-between text-[10px] text-slate-600 font-mono tracking-widest uppercase">
           <span>Mico Spin Intelligence</span>
-          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V15.0</span>
+          <span className="flex items-center gap-2"><Cpu className="w-3 h-3" /> Engine V16.0</span>
         </div>
       </footer>
     </main>
@@ -461,7 +461,7 @@ function GapDisplay({ results }: { results: ResultRow[] }) {
 }
 
 // ==========================================
-// المحرك الإحصائي (Reversion V15)
+// المحرك الإحصائي (Reversion V16)
 // ==========================================
 
 interface EnhancedDeviationData {
@@ -493,14 +493,13 @@ function getRecentMomentum(results: ResultRow[]): { meatMomentum: number; vegMom
   return { meatMomentum, vegMomentum };
 }
 
-// 👇 تم تعديل هذه الدالة فقط (V15): بونص أعلى للأنماط التسلسلية
 function getSequencePatternBonus(results: ResultRow[]): Record<string, number> {
   const bonus: Record<string, number> = {};
   SYMBOLS.forEach(s => { bonus[s.id] = 0; });
 
   if (results.length < 5) return bonus;
 
-  const patternLengths = [3, 2]; // أولاً 3، ثم 2
+  const patternLengths = [3, 2]; 
   
   for (const len of patternLengths) {
     if (results.length < len + 1) continue;
@@ -526,7 +525,6 @@ function getSequencePatternBonus(results: ResultRow[]): Record<string, number> {
     }
 
     if (totalMatches >= 2) {
-      // 👇 بونص أعلى (حتى 50 نقطة بدل 25) عشان يغلب الغياب
       Object.entries(matches).forEach(([symId, count]) => {
         bonus[symId] = (count / totalMatches) * 50;
       });
@@ -651,11 +649,9 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 
     const doubleBonus = deviation < 0 && relativeGap > 1.2;
     
-    // 👇 توزيع الأوزان (V15): الخضار كما هي، واللحوم معتمدة على الأنماط والتكرار
     let totalScore = 0;
 
     if (sym.type === 'vegetable') {
-      // الخضار: نفس معادلة V10 (لم تتغير)
       totalScore = 
         (deviationScore * 0.15) + 
         (gapScore * 0.20) + 
@@ -667,7 +663,6 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
       if (relativeGap >= 1.5) totalScore += 6;
       if (relativeGap >= 2.0) totalScore += 8;
     } else {
-      // 👇 اللحوم V15: التركيز على الأنماط (45%) والتكرار (30%)، وتخفيف الغياب (15%)
       totalScore = 
         (deviationScore * 0.10) + 
         (gapScore * 0.15) + 
@@ -676,12 +671,10 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
         (seqBonusForThisSymbol * 0.45) + 
         (repeatBonus * 0.20);
       
-      // 👇 مكافآت الغياب (خفيفة جداً، بس عشان ما نهمل الغائبين)
       if (relativeGap >= 1.5) totalScore += 5;
       if (relativeGap >= 2.0) totalScore += 8;
     }
     
-    // 👇 مكافأة التكرار الفوري (لكل الأنواع)
     const isLastResult = results[results.length - 1]?.symbol_id === sym.id;
     if (isLastResult) {
       if (repeatRate >= 20) totalScore += 30;
@@ -722,7 +715,7 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 }
 
 // ==========================================
-// مكون التوقعات (Reversion V15)
+// مكون التوقعات (Reversion V16)
 // ==========================================
 function StatisticalPredictor({ 
   results, 
@@ -749,24 +742,20 @@ function StatisticalPredictor({
 
   const { deviations, windowSize, momentum } = analyzeEnhancedDeviation(results);
 
-    const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
+  const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
 
-  // 👇 اختيار اللحوم بناءً على الأنماط أولاً، ثم الغياب
+  // 👇 V16: اختيار اللحوم بناءً على الأنماط أولاً، ثم الغياب
   const animalDeviations = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal');
   
-  // 1. نبحث عن لحوم لها بونص تسلسلي (seqBonus > 0)
   const animalsWithSequence = animalDeviations.filter(d => d.sequenceBonus > 0);
   
   let animalPicks;
   if (animalsWithSequence.length >= 2) {
-    // إذا كان هناك لحوم لها أنماط، نختار أعلى 3 منها (أو أقل إذا لم يوجد 3)
     animalPicks = animalsWithSequence.sort((a, b) => b.totalScore - a.totalScore).slice(0, 3);
   } else {
-    // إذا لم توجد أنماط كافية، نختار أعلى 3 لحوم حسب النقاط (الغياب وغيره)
     animalPicks = animalDeviations.sort((a, b) => b.totalScore - a.totalScore).slice(0, 3);
   }
 
-  // دمج التوقعات وترتيبها حسب النقاط للعرض
   const finalPicks = [...veggiePicks, ...animalPicks].sort((a, b) => b.totalScore - a.totalScore);
 
   const doubleBonusCount = finalPicks.filter(d => d.doubleBonus).length;
@@ -780,7 +769,7 @@ function StatisticalPredictor({
     <div className="flex-1 flex flex-col justify-between gap-5">
       <div>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V15</span>
+          <span className="text-[10px] text-slate-500 font-mono uppercase">Mico Spin V16</span>
           <span className="text-[10px] font-mono text-cyan-400">Window: {windowSize}</span>
         </div>
 
@@ -915,7 +904,7 @@ function StatisticalPredictor({
 }
 
 // ==========================================
-// لوحة الانحراف (Reversion V15)
+// لوحة الانحراف (Reversion V16)
 // ==========================================
 function DeviationPanel({ results }: { results: ResultRow[] }) {
   if (results.length < 10) {
