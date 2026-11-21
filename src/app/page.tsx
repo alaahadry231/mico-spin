@@ -100,7 +100,7 @@ export default function HomePage() {
     setSubmitting(true);
 
     const { deviations } = analyzeEnhancedDeviation(results);
-        const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
+    const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
     const animalPicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal').slice(0, 3);
     const finalPicks = [...veggiePicks, ...animalPicks];
     const wasInPicks = finalPicks.some(p => p.symbol === symbolId);
@@ -649,17 +649,18 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
 
     const doubleBonus = deviation < 0 && relativeGap > 1.2;
     
+    // 👇 توزيع الأوزان الجديد: التسلسل 35%، الغياب 20%، التكرار 20%، الانحراف 15%، الزخم 10%
     let totalScore = 
       (deviationScore * 0.15) + 
-      (gapScore * 0.30) + 
+      (gapScore * 0.20) + 
       (momentumBonus * 0.10) + 
       (streakBonus * 0.05) + 
-      (seqBonusForThisSymbol * 0.25) + 
-      (repeatBonus * 0.15);
+      (seqBonusForThisSymbol * 0.35) + 
+      (repeatBonus * 0.20);
 
-        if (relativeGap >= 1.2) totalScore += 8;
-    if (relativeGap >= 1.5) totalScore += 8;
-    if (relativeGap >= 2.0) totalScore += 10;
+    // 👇 خففنا مكافآت الغياب شوي عشان ما تطغى على الأنماط
+    if (relativeGap >= 1.5) totalScore += 6;
+    if (relativeGap >= 2.0) totalScore += 8;
     
     // 👇 مكافأة التكرار الفوري (زادت من 10 إلى 25)
     const isLastResult = results[results.length - 1]?.symbol_id === sym.id;
@@ -729,7 +730,7 @@ function StatisticalPredictor({
 
   const { deviations, windowSize, momentum } = analyzeEnhancedDeviation(results);
 
-    const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
+  const veggiePicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'vegetable').slice(0, 3);
   const animalPicks = deviations.filter(d => SYMBOLS.find(s => s.id === d.symbol)?.type === 'animal').slice(0, 3);
   const finalPicks = [...veggiePicks, ...animalPicks].sort((a, b) => b.totalScore - a.totalScore);
 
@@ -820,7 +821,7 @@ function StatisticalPredictor({
           </div>
         )}
 
-                <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-6 gap-2">
           {finalPicks.map((p, i) => {
             const sym = SYMBOLS.find(s => s.id === p.symbol)!;
             return (
