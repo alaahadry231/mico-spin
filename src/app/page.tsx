@@ -657,13 +657,17 @@ function analyzeEnhancedDeviation(results: ResultRow[]): {
       (seqBonusForThisSymbol * 0.25) + 
       (repeatBonus * 0.15);
 
-    if (relativeGap >= 1.2) totalScore += 8;
+        if (relativeGap >= 1.2) totalScore += 8;
     if (relativeGap >= 1.5) totalScore += 8;
     if (relativeGap >= 2.0) totalScore += 10;
     
+    // 👇 مكافأة التكرار الفوري (زادت من 10 إلى 25)
     const isLastResult = results[results.length - 1]?.symbol_id === sym.id;
-    if (isLastResult && repeatRate >= 10) {
-      totalScore += 10;
+    if (isLastResult) {
+      if (repeatRate >= 20) totalScore += 25;
+      else if (repeatRate >= 10) totalScore += 20;
+      else if (repeatRate >= 5) totalScore += 12;
+      else totalScore += 5;
     }
 
     if (doubleBonus) totalScore += 5;
